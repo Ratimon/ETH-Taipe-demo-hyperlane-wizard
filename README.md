@@ -26,7 +26,7 @@ You can preview the production build with `npm run preview`.
 
 ## What Is It For
 
-This dev tool can be thought as a code generator/ interactive playground to support bridge development using Hyperlane's CLI and its smart contact and . Now it offers  two routes including `collateralized ERC20 & ERC4626 to synthetic`  and `XERC20` routes. Specialised features can also be selected. They are Fast Fee, Fast Transfer and Route Limits Management.
+This dev tool can be thought as a code generator/ interactive playground to support bridge development using Hyperlane's CLI and its smart contact. Now, it offers two routes including collateralized ERC20&`ERC4626 to synthetic` and `XERC20` routes. Specialized features can also be selected. They are , for example, `Fast Fee`, `Fast Transfer` and `Route Limits Management`.
 
 ## Acknowledgement
 
