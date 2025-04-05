@@ -1,6 +1,6 @@
 <h1>ETHTaipe Hackathon Project: Hyperlabe Wizard </h1>
 
-![image](doc/cover.png)
+![image](doc/features.png)
 
 - [Installation](#installation)
 - [What is it for](#what-is-it-for)
