@@ -24,12 +24,11 @@ pnpm run build
 
 You can preview the production build with `npm run preview`.
 
-#what-is-it-for
+## What Is It For
 
 This dev tool can be thought as a code generator/ interactive playground to support bridge development using Hyperlane's CLI and its smart contact and . Now it offers  two routes including `collateralized ERC20 & ERC4626 to synthetic`  and `XERC20` routes. Specialised features can also be selected. They are Fast Fee, Fast Transfer and Route Limits Management.
 
-#acknowledgement
-
+## Acknowledgement
 
 - [OZ 's contracts](https://github.com/OpenZeppelin/openzeppelin-contracts) by **OpenZeppelin**
 - [OZ 's Wizard](https://github.com/OpenZeppelin/contracts-wizard/) by **OpenZeppelin**
