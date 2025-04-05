@@ -10,7 +10,7 @@
     <div class="mx-4 grid grid-cols-1 gap-y-12 md:grid-cols-2 lg:mx-32">
       <SolutionModel>
         {#snippet button1()}
-            <a href={'/dapp'}>
+            <a href={'/bridge'}>
                 <Button
                     variant="outline"
                     type="submit"
@@ -20,7 +20,7 @@
             </a>
         {/snippet}
         {#snippet button2()}
-            <a href={'/dapp'}>
+            <a href={'/bridge'}>
                 <Button
                     variant="outline"
                     type="submit"
