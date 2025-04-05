@@ -205,16 +205,6 @@ export class ContractBuilder implements Contract {
     this.using.push(using);
   }
 
-  // addModule(contract: ParentContract ) {
-  //   this.modules.push(contract);
-  // }
-
-  // addImportOnly(contract: ImportContract): boolean {
-  //   const present = this.parentMap.has(contract.name);
-  //   this.parentMap.set(contract.name, { contract, params: [], importOnly: true });
-  //   return !present;
-  // }
-
   addImportOnly(contract: ImportContract) {
     this.modules.push(contract);
   }

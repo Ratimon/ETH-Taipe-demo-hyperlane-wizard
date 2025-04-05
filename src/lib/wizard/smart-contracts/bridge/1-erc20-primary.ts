@@ -8,13 +8,11 @@ import { setAccessControlOZ, requireAccessControlOZ } from '../set-access-contro
 import { addPauseFunctionsOZ } from '../add-pausable';
 import { defineFunctions } from '../../utils/define-functions';
 
-import type { Upgradeable } from '../set-upgradeable';
 import { setUpgradeable } from '../set-upgradeable';
 import { setInfo } from '../set-info';
 import { printContract } from '../print';
 import type { ClockMode } from '../set-clock-mode';
 import { clockModeDefault, setClockMode } from '../set-clock-mode';
-import { supportsInterface } from '../common-functions';
 import { OptionsError } from '../../shared/error';
 
 
