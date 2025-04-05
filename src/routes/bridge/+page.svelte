@@ -26,6 +26,8 @@
     OptionsError
   } from '$lib/wizard/shared';
 
+  import {appName} from 'web-config';
+  import {url} from '$lib/utils/path';
 
   import {icons} from '$data/icon';
 
@@ -362,7 +364,17 @@
 
 <section class="max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-center gap-16 lg:gap-20 px-8 py-4 lg:py-10">
       
-  <div class="flex flex-col gap-10 lg:gap-7 items-center justify-center text-center lg:text-left lg:items-start">
+  <div class="flex flex-col gap-10 lg:gap-7 items-center justify-center text-center lg:text-left lg:items-center">
+    <a href={'/'}>
+      <img
+          class="w-32"
+          alt={appName}
+          placeholder="blur"
+          src={url('/pwa/favicon-512.png')}
+          width="32"
+          height="32"
+      />
+    </a>
     <h1 class="font-bold text-3xl lg:text-5xl tracking-tight md:-mb-4 bg-gradient-to-r from-red-600 via-green-500 to-indigo-400 text-transparent bg-clip-text">
         Let Build Your Own Bridge!
     </h1>

@@ -1,22 +1,15 @@
-# sv
+<h1>ETHTaipe Hackathon Project: Hyperlabe Wizard </h1>
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+![image](static/icon.png)
 
-## Creating a project
 
-If you're seeing this, you've probably already done this step. Congrats!
+- [Installation](#installation)
+- [What is it for](#what-is-it-for)
 
-```bash
-# create a new project in the current directory
-npx sv create
 
-# create a new project in my-app
-npx sv create my-app
-```
+## Installation
 
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+Once you've created a project and installed dependencies with `pnpm install` start a development server:
 
 ```bash
 pnpm dev
@@ -32,4 +25,13 @@ pnpm run build
 
 You can preview the production build with `npm run preview`.
 
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+#what-is-it-for
+
+This dev tool can be thought as a code generator/ interactive playground to support bridge development using Hyperlane's CLI and its smart contact and . Now it offers  two routes including `collateralized ERC20 & ERC4626 to synthetic`  and `XERC20` routes. Specialised features can also be selected. They are Fast Fee, Fast Transfer and Route Limits Management.
+
+#acknowledgement
+
+
+- [OZ 's contracts](https://github.com/OpenZeppelin/openzeppelin-contracts) by **OpenZeppelin**
+- [OZ 's Wizard](https://github.com/OpenZeppelin/contracts-wizard/) by **OpenZeppelin**
+- [Defi Wonderland's contracts](https://github.com/defi-wonderland/xERC20/blob/main/solidity/contracts)

@@ -17,6 +17,7 @@ const config = {
 		// See https://svelte.dev/docs/kit/adapters for more information about adapters.
 		adapter: adapter(),
 		alias: {
+			'web-config': './src/web-config.json',
 			'$data': './src/data',
 			'$lib': './src/lib',
 		},

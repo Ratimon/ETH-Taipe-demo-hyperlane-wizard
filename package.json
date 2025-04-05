@@ -4,6 +4,7 @@
 	"version": "0.0.1",
 	"type": "module",
 	"scripts": {
+		"generate_icon": "pwag static/icon.svg src/web-config.json && cp static/pwa/favicon-512.png static/maskable_icon_512x512.png",
 		"dev": "vite dev",
 		"build": "vite build",
 		"preview": "vite preview",
@@ -26,6 +27,7 @@
 		"daisyui": "4.12.22",
 		"mdsvex": "^0.12.3",
 		"path-browserify": "^1.0.1",
+		"pwag": "^0.3.0",
 		"svelte": "^5.0.0",
 		"svelte-check": "^4.0.0",
 		"svelte-preprocess": "^6.0.3",
