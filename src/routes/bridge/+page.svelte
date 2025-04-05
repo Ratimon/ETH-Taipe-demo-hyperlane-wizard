@@ -703,3 +703,53 @@
   </div>
 
 {/if}
+
+<style lang="postcss">
+
+  .container {
+      background-color: var(--gray-1);
+      border: 1px solid var(--gray-2);
+      border-radius: 10px;
+      min-width: 32rem;
+  }
+
+  .tab {
+    color: var(--gray-5);
+  }
+
+  .tab button, :global(.overflow-btn) {
+    padding: var(--size-1) var(--size-2);
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+
+  .tab button, :global(.overflow-btn) {
+    border: 0;
+    background-color: transparent;
+  }
+
+  .tab button:hover, :global(.overflow-btn):hover {
+    background-color: var(--gray-2);
+  }
+
+  .tab button.selected {
+    background-color: var(--solidity-blue-2);
+    color: white;
+    order: -1;
+  }
+
+  :global(.overflow-menu) button.selected {
+    order: unset;
+  }
+
+  .controls {
+    background-color: white;
+    padding: var(--size-4);
+  }
+
+  .controls {
+    border-radius: 5px;
+    box-shadow: var(--shadow);
+  }
+</style>
