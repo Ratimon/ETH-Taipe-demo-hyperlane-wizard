@@ -1,4 +1,3 @@
-// place files you want to import through the `$lib` alias in this folder.
 export type { GenericOptions, KindedOptions } from './build-generic';
 export { buildContractGeneric } from './build-generic';
 
@@ -18,6 +17,27 @@ export {
     erc4626,
     xerc20,
     xerc20lockbox,
+    hypERC20Collateral,
+    hypFiatToken,
+    hypERC4626Collateral,
+    hypERC4626OwnerCollateral,
+    fastHypERC20Collateral,
+    hypERC20,
+    fastHypERC20,
+    hypXERC20,
+    hypXERC20Lockbox,
 } from './api';
 
 export { buildERC20 } from './bridge/1-erc20-primary';
+export { buildERC4626 } from './bridge/1-erc4626-primary';
+export { buildXERC20 } from './bridge/1-xerc20-primary';
+export { buildXERC20Lockbox } from './bridge/1-xerc20lockbox-primary';
+export { buildHypERC20Collateral } from './bridge/2-hyp-erc20-collateral';
+export { buildHypFiatToken } from './bridge/2-hype-fiat-token';
+export { buildHypERC4626Collateral } from './bridge/2-hyp-erc4626-collateral';
+export { buildHypERC4626OwnerCollateral } from './bridge/2-hyp-erc4626-owner-collateral';
+export { buildFastHypERC20Collateral } from './bridge/2-fast-hyp-erc20-collateral';
+export { buildHypERC20 } from './bridge/2-hyp-erc20';
+export { buildFastHypERC20 } from './bridge/2-fast-hyp-erc20';
+export { buildHypXERC20 } from './bridge/2-hyp-xerc20';
+export { buildHypXERC20Lockbox } from './bridge/2-hyp-xerc20lockbox';

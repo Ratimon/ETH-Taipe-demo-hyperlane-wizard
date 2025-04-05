@@ -30,8 +30,16 @@
   import {icons} from '$data/icon';
 
   import AbstractIcon from '$lib/ui/icons/AbstractIcon.svelte';
+  import ScrollStep from '$lib/ui/components/ScrollStep.svelte';
   import Button from '$lib/ui/buttons/Button.svelte';
   import Background from '$lib/ui/layouts/Background.svelte';
+  import WizardSingle from '$lib/ui/components/WizardSingle.svelte';
+  import OverflowMenu from '$lib/ui/components/OverflowMenu.svelte';
+
+  import ERC20ContractControls from '$lib/ui/controls/ERC20ContractControls.svelte';
+  import ERC4626ContractControls from '$lib/ui/controls/ERC4626ContractControls.svelte';
+  import XERC20ContractControls from '$lib/ui/controls/XERC20ContractControls.svelte';
+  import XERC20LockboxContractControls from '$lib/ui/controls/XERC20LockboxContractControls.svelte';
 
   type Props = {
       data: PageData;
@@ -41,6 +49,7 @@
 
   const stepLinks : Link[] = [
       {pathname: '#1-select-routes', title: 'Select Routes', navType: 'scroll' },
+      {pathname: '#2-primary', title: 'Deploy dependency contract', navType: 'scroll' },
   ];
 
   type Route = 'Pick a route'
@@ -49,16 +58,21 @@
   type RouteState = 'SettingUproute'
     | 'SettingTokens'
     | 'DeployingPrimaryToken'
+    | 'DeployingRoutes'
 
-  type WarpRoute = {
+    type WarpRoute = {
     state: RouteState;
     route: Route;
+    tokenFromAddress: string;
+    tokenToAddress: string;
     // error?: unknown;
   };
 
   const warpRouteState: WarpRoute = $state({
     state: 'SettingUproute',
     route: 'Pick a route',
+    tokenFromAddress: '0x',
+    tokenToAddress: '0x',
   });
 
   let initialContractPrimaryTokenFromTab: string | undefined = $state('MyERC20');
@@ -100,8 +114,6 @@
     if (optsPrimaryTokenTo) {
       try {
         contractPrimaryTokenTo = buildContractGeneric(optsPrimaryTokenTo) as Contract;
-      //   deployContract = buildDeployGeneric(opts);
-      //   testContract = buildTestGeneric(opts);
 
         errorsPrimaryTokenTo[contractPrimaryTokenToTab] = undefined;
       } catch (e: unknown) {
@@ -176,7 +188,7 @@
   $effect(() => {
     if (optsContractFrom) {
       try {
-        // contractFrom = buildContractGeneric(optsContractFrom) as Contract;
+        contractFrom = buildContractGeneric(optsContractFrom) as Contract;
 
 
         errorsContractFrom[contractFromTab] = undefined;
@@ -241,7 +253,7 @@
   $effect(() => {
     if (optsContractTo) {
       try {
-        // contractTo = buildContractGeneric(optsContractTo) as Contract;
+        contractTo = buildContractGeneric(optsContractTo) as Contract;
 
         errorsContractTo[contractToTab] = undefined;
       } catch (e: unknown) {
@@ -267,20 +279,63 @@
     warpRouteState.state = 'SettingTokens';
     warpRouteState.route = warpRoute.route;
 
+    if (warpRoute.route === 'Collateral to Synthetic') {
+      initialContractFromTab = 'HypERC20Collateral'
+      initialContractToTab = 'HypERC20'
+      initialContractPrimaryTokenFromTab = 'ERC20'
+
+    } else if (warpRoute.route === 'xERC20 Routes') {
+      initialContractFromTab = 'HypXERC20Lockbox'
+      initialContractToTab = 'HypXERC20Lockbox'
+      initialContractPrimaryTokenFromTab = 'XERC20Lockbox'
+      initialContractPrimaryTokenToTab = 'XERC20Lockbox'
+    }
   }
 
   let openDropdownFrom: boolean = $state(false)
   function selectTokenFrom(contractName: string) {
+    initialContractFromTab = contractName
     openDropdownFrom = false
   }
 
   let openDropdownTo: boolean = $state(false)
   function selectTokenTo(contractName: string) {
+    initialContractToTab = contractName
     openDropdownTo = false
   }
 
   function comfirmStep1( primaryFromToken: string, primaryToToken: string ) {
     warpRouteState.state = 'DeployingPrimaryToken'
+    initialContractPrimaryTokenFromTab = primaryFromToken;
+    initialContractPrimaryTokenToTab = primaryToToken;
+  }
+
+  let isPrimaryTokenFromDeployed: boolean = $state(true);
+
+  function togglePrimaryTokenFromDeployed( ) {
+    isPrimaryTokenFromDeployed = !isPrimaryTokenFromDeployed
+  }
+
+  let isPrimaryTokenToDeployed: boolean = $state(true);
+
+  function togglePrimaryTokenToDeployed( ) {
+    isPrimaryTokenToDeployed = !isPrimaryTokenToDeployed
+  }
+
+  function areAddressesFilled( ) {
+    if (warpRouteState.route === 'Collateral to Synthetic') {
+      return warpRouteState.tokenFromAddress !== '0x'
+    }
+    if (warpRouteState.route === 'xERC20 Routes') {
+      return warpRouteState.tokenFromAddress !== '0x' && warpRouteState.tokenToAddress !== '0x'
+    }
+    return false
+  }
+
+  function comfirmStep2() {
+    if (areAddressesFilled()) {
+      warpRouteState.state = 'DeployingRoutes'
+    }
   }
 
 </script>
@@ -299,7 +354,7 @@
   <a
     href="/"
     class="link !no-underline text-base-content/80 hover:text-base-content inline-flex items-center gap-1"
-    title="Back to Homee"
+    title="Back to Home"
   >
     <AbstractIcon name={icons.ArrowBack.name} width="20" height="20" />
     Back to Home
@@ -316,7 +371,7 @@
 
 <div class="container flex flex-col gap-4 p-8 mx-8">
 
-  {#if warpRouteState.state === 'SettingUproute' || 'SettingTokens'}
+  {#if warpRouteState.state === 'SettingUproute' || 'SettingTokens' || 'DeployingPrimaryToken'}
 
     <legend class="fieldset-legend font-bold text-xl">Routes:</legend>
     <fieldset class="fieldset">
@@ -334,7 +389,7 @@
 
   {/if}
 
-  {#if warpRouteState.state === 'SettingTokens' }
+  {#if warpRouteState.state === 'SettingTokens' || warpRouteState.state === 'DeployingPrimaryToken' }
 
     <h2 class="font-bold text-xl">
       Select Contract Features:
@@ -424,3 +479,227 @@
   {/if}
 
 </div>
+
+<Background color="bg-base-100 pt-3 pb-4">
+  <section id={stepLinks[1].pathname}>
+    <div class="divider divider-primary ">
+      <h1 class={`btn ${warpRouteState.state !== 'DeployingPrimaryToken' ? 'btn-disabled' : 'btn-accent'} text-2xl `}>
+        Step 2 : Deploy dependency contract
+      </h1>
+    </div>
+  </section>
+</Background>
+
+<ScrollStep links={stepLinks} titleHighlighted={stepLinks[1].title} />
+
+
+{#if warpRouteState.state == 'SettingUproute' || warpRouteState.state == 'SettingTokens'}
+  <div class="container flex flex-row justify-center items-center p-8 mx-8 ">
+    <p class="font-bold text-xl">
+      Complete step One first!
+    </p>
+  </div>
+{:else}
+  <div class="container flex flex-col items-center justify-center gap-y-8 p-8 mx-8">
+    <!-- Source Chain -->
+    {#if contactFromPrimaryStandard === 'None'}
+      <h2 class="font-semibold text-xl">
+        No Address required at <div class="bg-gradient-to-r from-red-600 via-yellow-500 to-orange-400 text-transparent bg-clip-text" >Source Chain: </div>
+      </h2>
+    {:else}
+      <h2 class="font-semibold text-xl">
+        Address required at <div class="bg-gradient-to-r from-red-600 via-yellow-500 to-orange-400 text-transparent bg-clip-text" >Source Chain: </div>
+      </h2>
+
+      <div class="flex flex-row items-center gap-x-8 mx-8">
+      
+        <h3 class="font-semibold text-xl">
+          The standard being deployed is:
+        </h3>
+    
+        <h3 class="font-semibold text-lg">
+          {contactFromPrimaryStandard}
+        </h3>
+    
+        <fieldset class="fieldset p-4 bg-base-100 border border-base-300 rounded-box w-80">
+          <legend class="fieldset-legend font-bold">
+            Have Not Deployed Yet? Uncheck below to start modifying!!
+          </legend>
+          <label class="fieldset-label">
+            <input type="checkbox" checked={isPrimaryTokenFromDeployed} class="checkbox" onclick={togglePrimaryTokenFromDeployed} />
+            A contract at source chain already deployed
+          </label>
+        </fieldset>
+
+        <label class="input input-primary input-xl validator">
+          <!-- <legend class="fieldset-legend">Put required address here</legend> -->
+          <input bind:value={warpRouteState.tokenFromAddress} placeholder="Put required address here e.g. 0x.." type="text" required  minlength="42" pattern="/^0x[a-fA-F0-9]{40}$/" title="Must be a valid Ethereum address" />
+        </label>
+        <p class="validator-hint hidden">
+          Must be in the format of 0x followed by 40 characters
+        </p>
+          
+      </div>
+      
+      {#if !isPrimaryTokenFromDeployed}
+        <WizardSingle initialContractTab={initialContractPrimaryTokenFromTab} contractTab={contractPrimaryTokenFromTab} opts={optsPrimaryTokenFrom} contractInstance={contractPrimaryTokenFrom}>
+          {#snippet menu()}
+            <div class="tab overflow-hidden">
+              <Background color="bg-base-200">
+                <OverflowMenu>
+                  {#if contractPrimaryTokenFromTab === 'ERC20'}
+                    <button class:selected={contractPrimaryTokenFromTab === 'ERC20'} onclick={() => initialContractPrimaryTokenFromTab = 'ERC20'}>
+                      ERC20
+                    </button>
+                  {/if}
+                  {#if contractPrimaryTokenFromTab === 'ERC4626'}
+                    <button class:selected={contractPrimaryTokenFromTab === 'ERC4626'} onclick={() => initialContractPrimaryTokenFromTab = 'ERC4626'}>
+                      ERC4626
+                    </button>
+                  {/if}
+                  {#if contractPrimaryTokenFromTab === 'XERC20'}
+                    <button class:selected={contractPrimaryTokenFromTab === 'XERC20'} onclick={() => initialContractPrimaryTokenFromTab = 'XERC20'}>
+                      XERC20
+                    </button>
+                  {/if}
+                  {#if contractPrimaryTokenFromTab === 'XERC20Lockbox'}
+                    <button class:selected={contractPrimaryTokenFromTab === 'XERC20Lockbox'} onclick={() => initialContractPrimaryTokenFromTab = 'XERC20Lockbox'}>
+                      XERC20Lockbox
+                    </button>
+                  {/if}
+                </OverflowMenu>
+              </Background>
+            </div>
+          {/snippet}
+        
+          {#snippet control()}
+            <div class="controls w-64 flex flex-col shrink-0 justify-between h-[calc(150vh-80px)] overflow-auto">
+    
+              {#if contractPrimaryTokenFromTab === 'ERC20'}
+                <div class:hidden={contractPrimaryTokenFromTab !== 'ERC20'}>
+                  <ERC20ContractControls bind:opts={allOptsPrimaryTokenFrom.ERC20!}/>
+                </div>
+              {/if}
+              {#if contractPrimaryTokenFromTab === 'ERC4626'}
+                <div class:hidden={contractPrimaryTokenFromTab !== 'ERC4626'}>
+                  <ERC4626ContractControls bind:opts={allOptsPrimaryTokenFrom.ERC4626!}/>
+                </div>
+              {/if}
+              {#if contractPrimaryTokenFromTab === 'XERC20'}
+                <div class:hidden={contractPrimaryTokenFromTab !== 'XERC20'}>
+                  <XERC20ContractControls bind:opts={allOptsPrimaryTokenFrom.XERC20!}/>
+                </div>
+              {/if}
+              {#if contractPrimaryTokenFromTab === 'XERC20Lockbox'}
+                <div class:hidden={contractPrimaryTokenFromTab !== 'XERC20Lockbox'}>
+                  <XERC20LockboxContractControls bind:opts={allOptsPrimaryTokenFrom.XERC20Lockbox!}/>
+                </div>
+              {/if}
+              
+            </div>
+          {/snippet}
+        
+        </WizardSingle>
+    
+      {/if}
+    {/if}
+
+    <!-- Destination Chain -->
+    {#if contactToPrimaryStandard === 'None'}
+      <h2 class="font-semibold text-xl">
+        No Address required at<div class="bg-gradient-to-r from-red-600 via-yellow-500 to-orange-400 text-transparent bg-clip-text" >Destination Chain: </div>
+      </h2>
+    {:else}
+      <h2 class="font-semibold text-xl">
+        Address required at<div class="bg-gradient-to-r from-red-600 via-yellow-500 to-orange-400 text-transparent bg-clip-text" >Destination Chain: </div>
+      </h2>
+
+      <div class="flex flex-row items-center gap-x-16 mx-8">
+      
+        <h3 class="font-semibold text-xl">
+          The standard being deployed is:
+        </h3>
+    
+        <h3 class="font-semibold text-lg">
+          {contactToPrimaryStandard}
+        </h3>
+    
+        <fieldset class="fieldset p-4 bg-base-100 border border-base-300 rounded-box w-80">
+          <legend class="fieldset-legend font-bold">
+            Have Not Deployed Yet? Uncheck below to start modifying!!
+          </legend>
+          <label class="fieldset-label">
+            <input type="checkbox" checked={isPrimaryTokenToDeployed} class="checkbox" onclick={togglePrimaryTokenToDeployed} />
+            A contract at destimation chain already deployed
+          </label>
+        </fieldset>
+
+        <label class="input input-primary input-xl validator">
+          <!-- <legend class="fieldset-legend">Put required address here</legend> -->
+          <input bind:value={warpRouteState.tokenToAddress} placeholder="Put required address here e.g. 0x.." type="text" required  minlength="42" pattern="/^0x[a-fA-F0-9]{40}$/" title="Must be a valid Ethereum address" />
+        </label>
+        <p class="validator-hint hidden">
+          Must be in the format of 0x followed by 40 characters
+        </p>
+          
+      </div>
+
+      {#if !isPrimaryTokenToDeployed}
+        <WizardSingle initialContractTab={initialContractPrimaryTokenToTab} contractTab={contractPrimaryTokenToTab} opts={optsPrimaryTokenTo} contractInstance={contractPrimaryTokenTo}>
+          {#snippet menu()}
+            <div class="tab overflow-hidden">
+              <Background color="bg-base-200">
+                <OverflowMenu>
+                  {#if contractPrimaryTokenToTab === 'XERC20'}
+                    <button class:selected={contractPrimaryTokenToTab === 'XERC20'} onclick={() => initialContractPrimaryTokenToTab = 'XERC20'}>
+                      XERC20
+                    </button>
+                  {/if}
+                  {#if contractPrimaryTokenToTab === 'XERC20Lockbox'}
+                    <button class:selected={contractPrimaryTokenToTab === 'XERC20Lockbox'} onclick={() => initialContractPrimaryTokenToTab = 'XERC20Lockbox'}>
+                      XERC20Lockbox
+                    </button>
+                  {/if}
+                </OverflowMenu>
+              </Background>
+            </div>
+          {/snippet}
+        
+          {#snippet control()}
+            <div class="controls w-64 flex flex-col shrink-0 justify-between h-[calc(150vh-80px)] overflow-auto">
+    
+              {#if contractPrimaryTokenToTab === 'XERC20'}
+                <div class:hidden={contractPrimaryTokenToTab !== 'XERC20'}>
+                  <XERC20ContractControls bind:opts={allOptsPrimaryTokenTo.XERC20!}/>
+                </div>
+              {/if}
+
+              {#if contractPrimaryTokenToTab === 'XERC20Lockbox'}
+                <div class:hidden={contractPrimaryTokenToTab !== 'XERC20Lockbox'}>
+                  <XERC20LockboxContractControls bind:opts={allOptsPrimaryTokenTo.XERC20Lockbox!}/>
+                </div>
+              {/if}
+              
+            </div>
+          {/snippet}
+        </WizardSingle>
+    
+      {/if}
+
+    {/if}
+
+    <div class="w-full flex flex-row justify-end">
+      <Button
+          disabled={!areAddressesFilled()}
+          variant="default"
+          type="submit"
+          onclick={comfirmStep2}
+      >
+
+          Confirm the Addresses
+      </Button>
+    </div>
+
+  </div>
+
+{/if}
