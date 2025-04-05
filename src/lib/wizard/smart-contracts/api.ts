@@ -2,6 +2,18 @@ import type { SharedERC20Options} from '../shared/bridge/1-option-erc20';
 import {  defaults as erc20Defaults } from '../shared/bridge/1-option-erc20';
 import { printERC20, isAccessControlRequired as erc20IsAccessControlRequired } from './bridge/1-erc20-primary';
 
+import type { SharedERC4626Options } from '../shared/bridge/1-option-erc4626';
+import {  defaults as erc4626Defaults } from '../shared/bridge/1-option-erc4626';
+import { printERC4626, isAccessControlRequired as erc4626IsAccessControlRequired } from './bridge/1-erc4626-primary';
+
+import type { SharedXERC20Options } from '../shared/bridge/1-option-xerc20';
+import {  defaults as xerc20Defaults } from '../shared/bridge/1-option-xerc20';
+import { printXERC20, isAccessControlRequired as xerc20IsAccessControlRequired } from './bridge/1-xerc20-primary';
+
+import type { SharedXERC20LockboxOptions } from '../shared/bridge/1-option-xerc20lockbox';
+import {  defaults as xerc20lockboxDefaults } from '../shared/bridge/1-option-xerc20lockbox';
+import { printXERC20Lockbox, isAccessControlRequired as xerc20lockboxIsAccessControlRequired } from './bridge/1-xerc20lockbox-primary';
+
 
 import type { CommonOptions } from '../shared/common-options';
 
@@ -26,4 +38,25 @@ export const erc20: ERC20 = {
   print: printERC20,
   defaults: erc20Defaults,
   isAccessControlRequired: erc20IsAccessControlRequired
+}
+
+export type ERC4626 = WizardContractAPI<SharedERC4626Options>;
+export const erc4626: ERC4626 = {
+  print: printERC4626,
+  defaults: erc4626Defaults,
+  isAccessControlRequired: erc4626IsAccessControlRequired
+}
+
+export type XERC20 = WizardContractAPI<SharedXERC20Options>;
+export const xerc20: XERC20 = {
+  print: printXERC20,
+  defaults: xerc20Defaults,
+  isAccessControlRequired: xerc20IsAccessControlRequired
+}
+
+export type XERC20Lockbox = WizardContractAPI<SharedXERC20LockboxOptions>;
+export const xerc20lockbox: XERC20Lockbox = {
+  print: printXERC20Lockbox,
+  defaults: xerc20lockboxDefaults,
+  isAccessControlRequired: xerc20lockboxIsAccessControlRequired
 }

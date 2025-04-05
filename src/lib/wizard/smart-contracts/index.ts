@@ -15,6 +15,9 @@ export { defaults as contractInfoDefaults } from './set-info';
 
 export {
     erc20,
+    erc4626,
+    xerc20,
+    xerc20lockbox,
 } from './api';
 
 export { buildERC20 } from './bridge/1-erc20-primary';

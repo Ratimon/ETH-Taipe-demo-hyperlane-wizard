@@ -17,7 +17,6 @@
             Hyperlane Wizard
         </h1>
     </a>
-    
 </div>
 
 <Solution />
