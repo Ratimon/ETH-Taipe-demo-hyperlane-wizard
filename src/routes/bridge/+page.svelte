@@ -32,14 +32,27 @@
   import AbstractIcon from '$lib/ui/icons/AbstractIcon.svelte';
   import ScrollStep from '$lib/ui/components/ScrollStep.svelte';
   import Button from '$lib/ui/buttons/Button.svelte';
+  import CopyBlock from "$lib/ui/components/CopyBlock.svelte";
   import Background from '$lib/ui/layouts/Background.svelte';
   import WizardSingle from '$lib/ui/components/WizardSingle.svelte';
+  import WizardDouble from '$lib/ui/components/WizardDouble.svelte';
   import OverflowMenu from '$lib/ui/components/OverflowMenu.svelte';
 
   import ERC20ContractControls from '$lib/ui/controls/ERC20ContractControls.svelte';
   import ERC4626ContractControls from '$lib/ui/controls/ERC4626ContractControls.svelte';
   import XERC20ContractControls from '$lib/ui/controls/XERC20ContractControls.svelte';
   import XERC20LockboxContractControls from '$lib/ui/controls/XERC20LockboxContractControls.svelte';
+
+  import HypERC20CollateralContractControls from '$lib/ui/controls/HypERC20CollateralContractControls.svelte';
+  import HypFiatTokenContractControls from '$lib/ui/controls/HypFiatTokenContractControls.svelte';
+  import HypERC4626CollateralContractControls from '$lib/ui/controls/HypERC4626CollateralContractControls.svelte';
+  import HypERC4626OwnerCollateralContractControls from '$lib/ui/controls/HypERC4626OwnerCollateralContractControls.svelte';
+  import FastHypERC20CollateralContractControls from '$lib/ui/controls/FastHypERC20CollateralContractControls.svelte';
+
+  import HypERC20ContractControls from '$lib/ui/controls/HypERC20ContractControls.svelte';
+  import FastHypERC20ContractControls from '$lib/ui/controls/FastHypERC20ContractControls.svelte';
+  import HypXERC20ContractControls from '$lib/ui/controls/HypXERC20ContractControls.svelte';
+  import HypXERC20LockboxContractControls from '$lib/ui/controls/HypXERC20LockboxContractControls.svelte';
 
   type Props = {
       data: PageData;
@@ -50,6 +63,7 @@
   const stepLinks : Link[] = [
       {pathname: '#1-select-routes', title: 'Select Routes', navType: 'scroll' },
       {pathname: '#2-primary', title: 'Deploy dependency contract', navType: 'scroll' },
+      {pathname: '#3-deploy', title: 'Deploy & Visualize', navType: 'scroll'},
   ];
 
   type Route = 'Pick a route'
@@ -59,6 +73,7 @@
     | 'SettingTokens'
     | 'DeployingPrimaryToken'
     | 'DeployingRoutes'
+    | 'ManagingContract';
 
     type WarpRoute = {
     state: RouteState;
@@ -336,6 +351,10 @@
     if (areAddressesFilled()) {
       warpRouteState.state = 'DeployingRoutes'
     }
+  }
+
+  function comfirmStep3 () {
+    warpRouteState.state = 'ManagingContract';
   }
 
 </script>
@@ -702,6 +721,235 @@
 
   </div>
 
+{/if}
+
+<Background color="bg-base-100 pt-3 pb-4">
+  <section id={stepLinks[2].pathname}>
+    <div class="divider divider-primary ">
+      <h1 class={`btn ${warpRouteState.state !== 'DeployingRoutes' ? 'btn-disabled' : 'btn-accent'} text-2xl `}>
+        Step 3 : Deploy & Visualize Route
+      </h1>
+    </div>
+  </section>
+</Background>
+
+<ScrollStep links={stepLinks} titleHighlighted={stepLinks[2].title} />
+
+{#if warpRouteState.state == 'SettingUproute' || warpRouteState.state == 'SettingTokens' || warpRouteState.state == 'DeployingPrimaryToken'}
+  <div class="container flex flex-row justify-center items-center p-8 mx-8 ">
+    <p class="font-bold text-xl">
+      Complete step Two first!
+    </p>
+  </div>
+{:else}
+
+  <div class="container flex flex-col gap-x-4 gap-y-4 p-8 mx-8">
+
+    <div class="flex flex-col justify-center gap-y-4 pt-3 pb-4">
+      <h3 class="m-4 font-semibold">
+        Use <a class="bg-primary underline" href="https://docs.hyperlane.xyz/docs/reference/cli" target="_blank" rel="noreferrer">Hyperlane CLI</a> to initialize a config file:
+      </h3>
+      <CopyBlock
+        boxClass="p-2 rounded-box font-black text-primary max-w-xl mx-auto"
+        class="mb-5"
+        background="bg-primary-content"
+        copiedBackground="bg-success"
+        copiedColor="text-success-content"
+        text={`hyperlane warp init`}
+      />
+
+      <h3 class="m-4 font-semibold">
+        This will generate <a class="bg-primary underline" href="https://github.com/hyperlane-xyz/hyperlane-monorepo/blob/0e5c941b7b78779055731ad5daed79817535da7a/typescript/cli/examples/warp-route-deployment.yaml#L4" target="_blank" rel="noreferrer">warp-route-deployment.yaml</a> to prepare for deployment.
+      </h3>
+
+      <h3 class="m-4 font-semibold">
+          During CLI config process, enter your contract addresses in previous step as following:
+      </h3>
+
+      <div class="flex flex-row justif-center items-center gap-x-16 ">
+
+        <h3 class="font-medium text-base">
+          <div class="bg-gradient-to-r from-red-600 via-yellow-500 to-orange-400 text-transparent bg-clip-text" >Source Chain Deployed Addresses: </div>
+        </h3>
+
+
+        {#if contactFromPrimaryStandard === 'None'}
+          <h3 class="font-medium text-base">
+            No Address required
+          </h3>
+        {:else}
+          <CopyBlock
+            boxClass="p-2 rounded-box font-black text-primary max-w-xl mx-auto"
+            class="mb-5"
+            background="bg-primary-content"
+            copiedBackground="bg-success"
+            copiedColor="text-success-content"
+            text={warpRouteState.tokenFromAddress}
+          />
+        {/if}
+
+        <h3 class="font-medium text-base">
+          <div class="bg-gradient-to-r from-red-600 via-yellow-500 to-orange-400 text-transparent bg-clip-text" >Destination Chain Deployed Addresses: </div>
+        </h3>
+  
+        {#if contactToPrimaryStandard === 'None'}
+          <h3 class="font-medium text-base">
+            No Address required
+          </h3>
+        {:else}
+
+        <CopyBlock
+          boxClass="p-2 rounded-box font-black text-primary max-w-xl mx-auto"
+          class="mb-5"
+          background="bg-primary-content"
+          copiedBackground="bg-success"
+          copiedColor="text-success-content"
+            text={warpRouteState.tokenToAddress}
+          />
+        {/if}
+
+      </div>
+
+      <p class="m-4 text-base-300">
+        Check out about warp route deployment at 
+         <a class="underline" href="https://docs.hyperlane.xyz/docs/protocol/warp-routes/warp-routes-yield-routes/" target="_blank" rel="noreferrer"
+           >doc</a
+         >
+      </p>
+
+      <h3 class="m-4 font-semibold">
+        Run the following command to deploy the warp route.
+      </h3>
+      <CopyBlock
+        boxClass="p-2 rounded-box font-black text-primary max-w-xl mx-auto"
+        class="mb-5"
+        background="bg-primary-content"
+        copiedBackground="bg-success"
+        copiedColor="text-success-content"
+        text={`hyperlane warp deploy`}
+      />
+
+    </div>
+
+    <h3 class="font-semibold text-xl m-4">
+      <div class="bg-gradient-to-r from-red-600 via-green-500 to-indigo-400 text-transparent bg-clip-text" >Smart Contract Visualization</div> - See what your are being deployed :
+    </h3>
+
+    <div class="flex flex-row justif-center items-center gap-x-16 ">
+
+      <h3 class="font-semibold text-xl">
+        <div class="bg-gradient-to-r from-red-600 via-yellow-500 to-orange-400 text-transparent bg-clip-text" >Left : source chain</div>
+      </h3>
+
+      <h3 class="font-semibold text-xl">
+        {initialContractFromTab}
+      </h3>
+  
+      <h3 class="font-semibold text-xl">
+        <div class="bg-gradient-to-r from-red-600 via-yellow-500 to-orange-400 text-transparent bg-clip-text" >Right : destination chain</div>
+      </h3>
+  
+      <h3 class="font-semibold text-xl">
+        {initialContractToTab}
+      </h3>
+
+      <AbstractIcon name={icons.MenuDown.name} width="24" height="24" />
+    </div>
+
+    <WizardDouble
+      initialContractOneTab={initialContractFromTab}
+      contractOneTab={contractFromTab}
+      optsOne={optsContractFrom}
+      contractOneInstance={contractFrom}
+
+      initialContractTwoTab={initialContractToTab}
+      contractTwoTab={contractToTab}
+      optsTwo={optsContractTo}
+      contractTwoInstance={contractTo}
+    >
+
+      {#snippet control()}
+
+        <!-- From Contract Controls  -->
+        {#if contractFromTab === 'HypERC20Collateral'}
+          <div class:hidden={contractFromTab !== 'HypERC20Collateral'}>
+            <HypERC20CollateralContractControls bind:opts={allOptsFrom.HypERC20Collateral!}/>
+          </div>
+        {/if}
+        {#if contractFromTab === 'HypFiatToken'}
+          <div class:hidden={contractFromTab !== 'HypFiatToken'}>
+            <HypFiatTokenContractControls bind:opts={allOptsFrom.HypFiatToken!}/>
+          </div>
+        {/if}
+        {#if contractFromTab === 'HypERC4626Collateral'}
+          <div class:hidden={contractFromTab !== 'HypERC4626Collateral'}>
+            <HypERC4626CollateralContractControls bind:opts={allOptsFrom.HypERC4626Collateral!}/>
+          </div>
+        {/if}
+        {#if contractFromTab === 'HypERC4626OwnerCollateral'}
+          <div class:hidden={contractFromTab !== 'HypERC4626OwnerCollateral'}>
+            <HypERC4626OwnerCollateralContractControls bind:opts={allOptsFrom.HypERC4626OwnerCollateral!}/>
+          </div>
+        {/if}
+        {#if contractFromTab === 'HypERC4626OwnerCollateral'}
+          <div class:hidden={contractFromTab !== 'HypERC4626OwnerCollateral'}>
+            <HypERC4626OwnerCollateralContractControls bind:opts={allOptsFrom.HypERC4626OwnerCollateral!}/>
+          </div>
+        {/if}
+        {#if contractFromTab === 'FastHypERC20Collateral'}
+          <div class:hidden={contractFromTab !== 'FastHypERC20Collateral'}>
+            <FastHypERC20CollateralContractControls bind:opts={allOptsFrom.FastHypERC20Collateral!}/>
+          </div>
+        {/if}
+        {#if contractFromTab === 'HypXERC20'}
+          <div class:hidden={contractFromTab !== 'HypXERC20'}>
+            <HypXERC20ContractControls bind:opts={allOptsFrom.HypXERC20!}/>
+          </div>
+        {/if}
+        {#if contractFromTab === 'HypXERC20Lockbox'}
+          <div class:hidden={contractFromTab !== 'HypXERC20Lockbox'}>
+            <HypXERC20LockboxContractControls bind:opts={allOptsFrom.HypXERC20Lockbox!}/>
+          </div>
+        {/if}
+
+        <!-- To Contract Controls  -->
+        {#if contractToTab === 'HypERC20'}
+          <div class:hidden={contractToTab !== 'HypERC20'}>
+            <HypERC20ContractControls bind:opts={allOptsTo.HypERC20!}/>
+          </div>
+        {/if}
+        {#if contractToTab === 'FastHypERC20'}
+          <div class:hidden={contractToTab !== 'FastHypERC20'}>
+            <FastHypERC20ContractControls bind:opts={allOptsTo.FastHypERC20!}/>
+          </div>
+        {/if}
+        {#if contractToTab === 'HypXERC20'}
+          <div class:hidden={contractToTab !== 'HypXERC20'}>
+            <HypXERC20ContractControls bind:opts={allOptsTo.HypXERC20!}/>
+          </div>
+        {/if}
+        {#if contractToTab === 'HypXERC20Lockbox'}
+          <div class:hidden={contractToTab !== 'HypXERC20Lockbox'}>
+            <HypXERC20LockboxContractControls bind:opts={allOptsTo.HypXERC20Lockbox!}/>
+          </div>
+        {/if}
+
+      {/snippet}
+
+    </WizardDouble>
+
+    <div class="w-full flex flex-row justify-end">
+      <Button
+          disabled={!areAddressesFilled()}
+          variant="default"
+          type="submit"
+          onclick={comfirmStep3}
+      >
+          Confirm Deployment
+      </Button>
+    </div>
+    
+  </div>
 {/if}
 
 <style lang="postcss">
